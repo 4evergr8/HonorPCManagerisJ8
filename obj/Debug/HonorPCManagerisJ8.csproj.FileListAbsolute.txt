@@ -1,0 +1,8 @@
+E:\Project\HonorPCManagerisJ8\obj\Debug\HonorPCManagerisJ8.csproj.AssemblyReference.cache
+E:\Project\HonorPCManagerisJ8\obj\Debug\HonorPCManagerisJ8.csproj.CoreCompileInputs.cache
+E:\Project\HonorPCManagerisJ8\bin\Debug\HonorPCManagerisJ8.exe
+E:\Project\HonorPCManagerisJ8\bin\Debug\HonorPCManagerisJ8.pdb
+E:\Project\HonorPCManagerisJ8\obj\Debug\HonorPCManagerisJ8.exe
+E:\Project\HonorPCManagerisJ8\obj\Debug\HonorPCManagerisJ8.pdb
+E:\Project\HonorPCManagerisJ8\bin\Debug\WinRing0x64.sys
+E:\Project\HonorPCManagerisJ8\bin\Debug\EmbeddedController.dll
