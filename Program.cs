@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Security.Principal;
 using System.Windows.Forms;
@@ -33,9 +34,28 @@ static class Program
         Application.SetCompatibleTextRenderingDefault(false);
 
         // 调用Ring0Init，确保驱动加载
+        try
+        {
+            EcAccess.Init();                      // 初始化驱动
+            EcAccess.WriteEC(0x93, 99);         // 向 EC 寄存器 0x93 写入 0x55
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("EC 写入失败：" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+
+
         
 
         TrayIconApp.Run(); // 运行托盘程序
+        
+
+
+
+        
+        
+        
     }
 
     static bool IsAdministrator()
