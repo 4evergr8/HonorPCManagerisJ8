@@ -10,7 +10,7 @@ public class ConfigData
     public int ec { get; set; }
     public int data { get; set; }
 
-    public List<Dictionary<string, string>> settings { get; set; }
+    public List<Dictionary<int, int>> settings { get; set; }
 }
 
 public static class YamlConfigLoader
@@ -36,7 +36,7 @@ public static class YamlConfigLoader
             timeout = Convert.ToInt32(result["timeout"]),
             ec = Convert.ToInt32(result["ec"]),
             data = Convert.ToInt32(result["data"]),
-            settings = new List<Dictionary<string, string>>()
+            settings = new List<Dictionary<int, int>>()
         };
 
         var settingsList = result["settings"] as List<object>;
@@ -44,10 +44,10 @@ public static class YamlConfigLoader
         foreach (var item in settingsList)
         {
             var entry = item as Dictionary<object, object>;
-            var dict = new Dictionary<string, string>();
+            var dict = new Dictionary<int, int>();
             foreach (var kv in entry)
             {
-                dict[kv.Key.ToString()] = kv.Value.ToString();
+                dict[Convert.ToInt32(kv.Key)] = Convert.ToInt32(kv.Value);
             }
             config.settings.Add(dict);
         }

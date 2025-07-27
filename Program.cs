@@ -34,7 +34,7 @@ static class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         
-        TrayIconApp.Run(); // 运行托盘程序
+        TrayIconApp.RunTrayIconInBackground(); // 运行托盘程序
         
         
         
@@ -57,7 +57,17 @@ static class Program
             try
             {
                 EcAccess.Init();                      // 初始化驱动
-                EcAccess.WriteEC(0x93, 99);         // 向 EC 寄存器 0x93 写入 0x55
+
+                foreach (var dict in config.settings)
+                {
+                    foreach (var kv in dict)
+                    {
+                        EcAccess.WriteEC((byte)kv.Key, (byte)kv.Value);
+                    }
+                }
+
+
+                     // 向 EC 寄存器 0x93 写入 0x55
             }
             catch (Exception ex)
             {

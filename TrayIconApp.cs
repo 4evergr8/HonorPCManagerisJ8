@@ -2,61 +2,71 @@
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Forms;
 
 static class TrayIconApp
 {
-    private static NotifyIcon notifyIcon;
-    private static ContextMenuStrip trayMenu;
-    private static Icon trayIcon;
-
-    public static void Run()
+    public static void RunTrayIconInBackground()
     {
-        // 加载嵌入的J8.png图标
-        try
+        Thread trayThread = new Thread(() =>
         {
-            var asm = Assembly.GetExecutingAssembly();
-            using (Stream stream = asm.GetManifestResourceStream("HonorPCManagerisJ8.J8.ico"))
-            {
-                trayIcon = new Icon(stream);
-            }
-        }
-        catch
-        {
-            MessageBox.Show("无法加载嵌入图标 J8.ico", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
-        }
+            Application.Run(new TrayApplicationContext());
+        });
 
-
-        trayMenu = new ContextMenuStrip();
-        trayMenu.Items.Add("退出", null, OnExit);
-
-        notifyIcon = new NotifyIcon
-        {
-            Icon = trayIcon,
-            Text = "J8 托盘程序",
-            ContextMenuStrip = trayMenu,
-            Visible = true
-        };
-
-        // 隐藏窗体防止程序退出
-        var invisibleForm = new Form
-        {
-            ShowInTaskbar = false,
-            WindowState = FormWindowState.Minimized,
-            Visible = false
-        };
-
-        Application.Run(invisibleForm);
-
-        notifyIcon.Visible = false;
-        notifyIcon.Dispose();
-        trayMenu.Dispose();
-        trayIcon.Dispose();
+        trayThread.IsBackground = true;
+        trayThread.SetApartmentState(ApartmentState.STA); // WinForms 必须为 STA
+        trayThread.Start();
     }
 
-    private static void OnExit(object sender, EventArgs e)
+    private class TrayApplicationContext : ApplicationContext
     {
-        Application.Exit();
+        private NotifyIcon notifyIcon;
+        private Icon trayIcon;
+
+        public TrayApplicationContext()
+        {
+            try
+            {
+                var asm = Assembly.GetExecutingAssembly();
+                using (Stream stream = asm.GetManifestResourceStream("HonorPCManagerisJ8.J8.ico"))
+                {
+                    trayIcon = new Icon(stream);
+                }
+            }
+            catch
+            {
+                MessageBox.Show("无法加载嵌入图标 J8.ico", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ExitThread();
+                return;
+            }
+
+            ContextMenuStrip trayMenu = new ContextMenuStrip();
+            trayMenu.Items.Add("退出", null, OnExit);
+
+            notifyIcon = new NotifyIcon
+            {
+                Icon = trayIcon,
+                Text = "J8 托盘程序",
+                ContextMenuStrip = trayMenu,
+                Visible = true
+            };
+        }
+
+        private void OnExit(object sender, EventArgs e)
+        {
+            ExitThread();
+        }
+
+        protected override void ExitThreadCore()
+        {
+            if (notifyIcon != null)
+            {
+                notifyIcon.Visible = false;
+                notifyIcon.Dispose();
+                trayIcon?.Dispose();
+            }
+            base.ExitThreadCore();
+        }
     }
 }
