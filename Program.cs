@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Security.Principal;
+using System.Threading;
 using System.Windows.Forms;
 
 static class Program
@@ -32,23 +33,54 @@ static class Program
 
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
+        
+        TrayIconApp.Run(); // 运行托盘程序
+        
+        
+        
+        var config = YamlConfigLoader.LoadConfig();
+        var timeout= config.timeout;
+        var startup = config.startup;
+        var ec = config.ec;
+        var data = config.data;
+        var settings = config.settings;
+        
+        
+        AutoStartHelper.SetAutoStart(startup);
 
-        // 调用Ring0Init，确保驱动加载
-        try
+        while (true)
         {
-            EcAccess.Init();                      // 初始化驱动
-            EcAccess.WriteEC(0x93, 99);         // 向 EC 寄存器 0x93 写入 0x55
+            
+                
+
+            // 调用Ring0Init，确保驱动加载
+            try
+            {
+                EcAccess.Init();                      // 初始化驱动
+                EcAccess.WriteEC(0x93, 99);         // 向 EC 寄存器 0x93 写入 0x55
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("EC 写入失败：" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            // === 你要执行的逻辑 ===
+            Console.WriteLine("跑一次：" + DateTime.Now);
+            
+
+            Thread.Sleep(timeout);
         }
-        catch (Exception ex)
-        {
-            MessageBox.Show("EC 写入失败：" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
+        
+        
+        
+        
+        
+        
+    
 
 
 
         
 
-        TrayIconApp.Run(); // 运行托盘程序
         
 
 

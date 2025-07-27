@@ -16,17 +16,17 @@ static class TrayIconApp
         try
         {
             var asm = Assembly.GetExecutingAssembly();
-            using (Stream stream = asm.GetManifestResourceStream("HonorPCManagerisJ8.J8.png"))
-            using (Bitmap bmp = new Bitmap(stream))
+            using (Stream stream = asm.GetManifestResourceStream("HonorPCManagerisJ8.J8.ico"))
             {
-                trayIcon = Icon.FromHandle(bmp.GetHicon());
+                trayIcon = new Icon(stream);
             }
         }
         catch
         {
-            MessageBox.Show("无法加载嵌入图标 J8.png", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("无法加载嵌入图标 J8.ico", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
+
 
         trayMenu = new ContextMenuStrip();
         trayMenu.Items.Add("退出", null, OnExit);

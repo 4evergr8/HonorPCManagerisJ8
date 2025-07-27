@@ -1,0 +1,8 @@
+﻿startup: false
+timeout: 3600000
+ec: 66
+data: 62
+settings:
+  - 数字: 数字
+  - 数字: 数字
+  - 数字: 数字
