@@ -7,10 +7,10 @@ public class ConfigData
 {
     public int timeout { get; set; }
     public bool startup { get; set; }
-    public int ec { get; set; }
-    public int data { get; set; }
+    public bool debug { get; set; }
+    public int wait { get; set; }
 
-    public List<Dictionary<int, int>> settings { get; set; }
+    public List<Dictionary<string, string>> settings { get; set; }  // 改成字符串key和value
 }
 
 public static class YamlConfigLoader
@@ -34,9 +34,10 @@ public static class YamlConfigLoader
         var config = new ConfigData
         {
             timeout = Convert.ToInt32(result["timeout"]),
-            ec = Convert.ToInt32(result["ec"]),
-            data = Convert.ToInt32(result["data"]),
-            settings = new List<Dictionary<int, int>>()
+            startup = Convert.ToBoolean(result["startup"]),
+            debug = Convert.ToBoolean(result["debug"]),
+            wait = Convert.ToInt32(result["wait"]),
+            settings = new List<Dictionary<string, string>>()  // 改成字符串类型列表
         };
 
         var settingsList = result["settings"] as List<object>;
@@ -44,10 +45,10 @@ public static class YamlConfigLoader
         foreach (var item in settingsList)
         {
             var entry = item as Dictionary<object, object>;
-            var dict = new Dictionary<int, int>();
+            var dict = new Dictionary<string, string>();
             foreach (var kv in entry)
             {
-                dict[Convert.ToInt32(kv.Key)] = Convert.ToInt32(kv.Value);
+                dict[kv.Key.ToString()] = kv.Value.ToString();  // 转成字符串
             }
             config.settings.Add(dict);
         }
