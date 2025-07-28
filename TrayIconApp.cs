@@ -7,11 +7,11 @@ using System.Windows.Forms;
 
 static class TrayIconApp
 {
-    public static void RunTrayIconInBackground()
+    public static void RunTrayIconInBackground(Action onExitAction)
     {
         Thread trayThread = new Thread(() =>
         {
-            Application.Run(new TrayApplicationContext());
+            Application.Run(new TrayApplicationContext(onExitAction));
         });
 
         trayThread.IsBackground = true;
@@ -23,9 +23,12 @@ static class TrayIconApp
     {
         private NotifyIcon notifyIcon;
         private Icon trayIcon;
+        private readonly Action onExitAction;
 
-        public TrayApplicationContext()
+        public TrayApplicationContext(Action onExit)
         {
+            onExitAction = onExit;
+
             try
             {
                 var asm = Assembly.GetExecutingAssembly();
@@ -55,6 +58,9 @@ static class TrayIconApp
 
         private void OnExit(object sender, EventArgs e)
         {
+            // 先调用 Main 中传来的退出逻辑
+            onExitAction?.Invoke();
+            // 再关闭托盘线程
             ExitThread();
         }
 
