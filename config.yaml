@@ -1,7 +1,9 @@
 ﻿startup: false
+debug : true
 timeout: 3600000
-ec: 66
-data: 62
+wait: 100
+
+
 settings:
   - 92: 0
   - 93: 50
