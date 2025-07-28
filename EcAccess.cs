@@ -41,7 +41,27 @@ public static class EcAccess
         public uint PortNumber;
     }
 
-    
+    public static void Init()
+    {
+        handle = CreateFileW(
+            @"\\.\WinRing0_1_2_0",
+            GENERIC_READ | GENERIC_WRITE,
+            0,
+            IntPtr.Zero,
+            OPEN_EXISTING,
+            0,
+            IntPtr.Zero
+        );
+
+        if (handle.ToInt64() == -1)
+        {
+            throw new Exception("打开 WinRing0 设备失败：" + Marshal.GetLastWin32Error());
+        }
+
+        Console.WriteLine("驱动设备打开成功");
+    }
+
+
     public static void WriteEC(byte address, byte data,int wait)
     {
         Console.WriteLine("[1] 等待 EC 空闲");
@@ -91,17 +111,7 @@ public static class EcAccess
         throw new TimeoutException("等待 IBF 清零超时");
     }
 
-    private static void WaitObfSet()
-    {
-        for (int i = 0; i < 1000; i++)
-        {
-            byte status = ReadPort(EC_SC);
-            if ((status & 0x01) != 0) // OBF = 1
-                return;
-            Thread.Sleep(5);
-        }
-        throw new TimeoutException("等待 OBF 置位超时");
-    }
+
 
     private static byte ReadPort(byte port)
     {
