@@ -23,7 +23,7 @@ static class Program
     {
         // 先隐藏控制台窗口
         var handle = GetConsoleWindow();
-        ShowWindow(handle, SW_HIDE);
+        ShowWindow(handle, SW_SHOW);
 
         // 判断管理员权限
         if (!IsAdministrator())
@@ -59,9 +59,9 @@ static class Program
         var debug = config.debug;
 
         // 如果debug为true，显示控制台窗口
-        if (debug)
+        if (!debug)
         {
-            ShowWindow(handle, SW_SHOW);
+            ShowWindow(handle, SW_HIDE);
         }
 
         AutoStartHelper.SetAutoStart(startup);
