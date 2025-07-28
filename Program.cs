@@ -104,6 +104,7 @@ static class Program
             try
             {
                 DriverLoader.InitializeDriver();
+                EcAccess.Init();    
                 foreach (var dict in config.settings)
                 {
                     foreach (var kv in dict)
