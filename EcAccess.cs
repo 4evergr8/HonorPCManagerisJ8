@@ -41,79 +41,43 @@ public static class EcAccess
         public uint PortNumber;
     }
 
-    public static void Init()
-    {
-        handle = CreateFileW(
-            @"\\.\WinRing0_1_2_0",
-            GENERIC_READ | GENERIC_WRITE,
-            0,
-            IntPtr.Zero,
-            OPEN_EXISTING,
-            0,
-            IntPtr.Zero
-        );
-
-        if (handle.ToInt64() == -1)
-        {
-            throw new Exception("打开 WinRing0 设备失败：" + Marshal.GetLastWin32Error());
-        }
-
-        Console.WriteLine("驱动设备打开成功");
-    }
-
-    public static void WriteEC(byte address, byte data)
+    
+    public static void WriteEC(byte address, byte data,int wait)
     {
         Console.WriteLine("[1] 等待 EC 空闲");
         WaitIbfClear();
+        Thread.Sleep(wait);
 
         Console.WriteLine("[2] 写入命令 0x81 到 EC_SC");
         WritePort(EC_SC, 0x81);
+        Thread.Sleep(wait);
 
         Console.WriteLine("[3] 等待 EC 空闲");
         WaitIbfClear();
+        Thread.Sleep(wait);
 
         Console.WriteLine($"[4] 写入地址 0x{address:X2} 到 EC_DATA");
         WritePort(EC_DATA, address);
+        Thread.Sleep(wait);
 
         Console.WriteLine("[5] 等待 EC 空闲");
         WaitIbfClear();
+        Thread.Sleep(wait);
 
         Console.WriteLine($"[6] 写入数据 0x{data:X2} 到 EC_DATA");
         WritePort(EC_DATA, data);
+        Thread.Sleep(wait);
 
         Console.WriteLine("[7] 等待 EC 空闲");
         WaitIbfClear();
-
+        Thread.Sleep(wait);
         Console.WriteLine($"[完成] 成功写入 EC 寄存器 0x{address:X2} = 0x{data:X2}");
 
-        Thread.Sleep(500); // 确保写入已完成
 
-        byte readBack = ReadEC(address);
-        Console.WriteLine($"[验证] 从 EC 地址 0x{address:X2} 读取到的值为 0x{readBack:X2}");
+
     }
 
-    public static byte ReadEC(byte address)
-    {
-        Console.WriteLine("[R1] 等待 EC 空闲");
-        WaitIbfClear();
 
-        Console.WriteLine("[R2] 写入命令 0x80 到 EC_SC");
-        WritePort(EC_SC, 0x80);
-
-        Console.WriteLine("[R3] 等待 EC 空闲");
-        WaitIbfClear();
-
-        Console.WriteLine($"[R4] 写入地址 0x{address:X2} 到 EC_DATA");
-        WritePort(EC_DATA, address);
-
-        Console.WriteLine("[R5] 等待 OBF 置位");
-        WaitObfSet();
-
-        byte value = ReadPort(EC_DATA);
-        Console.WriteLine($"[R6] 从 EC_DATA 读取值 0x{value:X2}");
-
-        return value;
-    }
 
     private static void WaitIbfClear()
     {
