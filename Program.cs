@@ -66,6 +66,7 @@ static class Program
             try
             {
                 DriverLoader.InitializeDriver();
+                EcAccess.Init();   
                 foreach (var dict in config.exit)
                 {
                     foreach (var kv in dict)
