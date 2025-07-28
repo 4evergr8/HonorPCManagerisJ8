@@ -1,12 +1,12 @@
-﻿startup: false
+﻿startup: true
 debug : true
 timeout: 3600000
 wait: 100
 
 
 settings:
-  - 92: 0
-  - 93: 50
+  - 92: 00
+  - 93: 32
   - 24: 00
   - 25: 00
-  - 21: 35
+  - 21: 23
