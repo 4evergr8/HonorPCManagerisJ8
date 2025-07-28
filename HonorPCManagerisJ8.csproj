@@ -49,6 +49,7 @@
     <ItemGroup>
         <Compile Include="AutoStartHelper.cs" />
         <Compile Include="ConfigData.cs" />
+        <Compile Include="DriverLoader.cs" />
         <Compile Include="EcAccess.cs" />
         <Compile Include="Program.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
