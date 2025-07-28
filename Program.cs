@@ -49,7 +49,7 @@ static class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
 
-        TrayIconApp.RunTrayIconInBackground(); // 运行托盘程序
+
 
         var config = YamlConfigLoader.LoadConfig();
         var timeout = config.timeout;
@@ -57,6 +57,38 @@ static class Program
         var settings = config.settings;
         var wait = config.wait;
         var debug = config.debug;
+        var exit = config.exit;
+        
+        // 注册退出时要执行的逻辑（你可以写自己的释放逻辑）
+        TrayIconApp.RunTrayIconInBackground(() =>
+        {
+            // 这是退出前你希望执行的代码
+            try
+            {
+                DriverLoader.InitializeDriver();
+                foreach (var dict in config.exit)
+                {
+                    foreach (var kv in dict)
+                    {
+                        // key 按10进制转换
+                        byte keyByte = Convert.ToByte(kv.Key, 10);
+
+                        // value 按16进制转换，直接转换，不用去除0x
+                        byte valueByte = Convert.ToByte(kv.Value, 16);
+
+                        EcAccess.WriteEC(keyByte, valueByte, wait);
+                    }
+                }
+
+                // 向 EC 寄存器 0x93 写入 0x55
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("EC 写入失败：" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            // 比如关闭定时器、保存配置、断开驱动连接等
+        });
+
 
         // 如果debug为true，显示控制台窗口
         if (!debug)
