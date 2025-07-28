@@ -8,8 +8,8 @@ using System.Threading;
 
 public static class DriverLoader
 {
-    private const string DRIVER_ID = "MyDriver";
-    private static readonly string DriverPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MyDriver", "MyDriver.sys");
+    private const string DRIVER_ID = "WinRing0_1_2_0";
+    private static readonly string DriverPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WinRing0x64.sys");
     private const int MaxRetry = 2;
 
     public static void InitializeDriver()
